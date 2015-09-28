@@ -1,0 +1,128 @@
+
+package com.adebray.mod;
+
+import java.io.Console;
+import java.util.ArrayList;
+
+import javax.swing.DebugGraphics;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockGlass;
+import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
+
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
+
+@Mod(modid="myid", name="MyModName", version="0.0", dependencies="required-after:FML")
+public class GenericTest {
+	
+	@Instance("myid") public static GenericTest instance;
+
+	public class MyEventHandler {
+
+		public ArrayList<String> slots = new ArrayList<String>();
+		
+		@SubscribeEvent
+		public void GuiEvent(RenderGameOverlayEvent.Text event) {
+			if (net.minecraft.client.Minecraft.getMinecraft().gameSettings.showDebugInfo) {
+				event.left.clear();
+				event.right.clear();
+				event.left.add("nbBlockA: " + instance.blockA.nbBlock);
+				for (String val : slots)
+					event.left.add(val);
+			}
+		}
+		
+		@SubscribeEvent
+		public void PlayerInteract(PlayerInteractEvent event) {
+			if (slots.size() >= 24)
+				slots.remove(0);
+			slots.add(event.action.toString());
+		}
+	}
+	
+	public class MyBlock extends Block {
+
+		public class MyBlockEventHandler {
+			
+			@SubscribeEvent
+			public void placeBlock(PlaceEvent event) {
+				if (event.block.getLocalizedName().equals(instance.blockA.getLocalizedName()))
+					nbBlock += 1;
+			}
+		}
+			
+		int nbBlock = 0;
+		MyBlockEventHandler eventhandler = new MyBlockEventHandler();
+	
+    	public MyBlock() {
+			super(Material.ground);
+
+			setBlockTextureName("myid:test0");
+			setBlockName("DefaultName");
+			setCreativeTab(CreativeTabs.tabBlock);
+			setHardness(0.5F);
+			setLightOpacity(0);
+		}
+	}
+	
+	public class MyGlassBlock extends Block {
+		
+		@Override
+		public boolean isOpaqueCube () {
+			return false;
+		}
+
+		
+		public MyGlassBlock() {
+			super(Material.glass);
+
+			setBlockTextureName("myid:test1");
+			setBlockName("DefaultGlass");
+			setCreativeTab(CreativeTabs.tabBlock);
+		}
+	}
+		
+	public MyBlock blockA = new MyBlock();
+	public MyGlassBlock blockB = new MyGlassBlock();
+	public MyEventHandler events = new MyEventHandler();
+	public MyBlock.MyBlockEventHandler eventsblock = blockA.eventhandler;
+	
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		System.out.println("This is my pre-init event catcher");
+
+		FMLCommonHandler.instance().bus().register(events);
+    	MinecraftForge.EVENT_BUS.register(events);
+		FMLCommonHandler.instance().bus().register(eventsblock);
+    	MinecraftForge.EVENT_BUS.register(eventsblock);
+
+    	GameRegistry.registerBlock(blockA, "DefaultName");
+    	GameRegistry.registerBlock(blockB, "DefaultGlass");
+	}
+	
+	@EventHandler
+	public void Init(FMLInitializationEvent event) {
+		System.out.println("This is my init event catcher");
+	}
+	
+	@EventHandler
+	public void PostInit(FMLPostInitializationEvent event) {
+		System.out.println("This is my post event catcher");	
+		
+		
+	}
+}

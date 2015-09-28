@@ -1,0 +1,16 @@
+[
+{
+  "modid": "OldDwarves",
+  "name": "OldDwarves",
+  "description": "This is my private place.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/Zleub/OldDwarves",
+  "updateUrl": "",
+  "authorList": ["zleub"],
+  "credits": "The Forge and FML guys !",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

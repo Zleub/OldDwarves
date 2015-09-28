@@ -1,0 +1,40 @@
+package com.adebray.mod;
+
+import java.io.Console;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+
+import net.minecraft.creativetab.CreativeTabs;
+
+@Mod(modid="4242", name="MyMod", version="0.0", dependencies="required-after:FML")
+public class GenericTest {
+	
+	@Instance("4242")
+	public static GenericTest instance;
+
+	@EventHandler
+	public void preInit(FMLInitializationEvent event) {
+		System.out.println("This is my pre-init event catcher");
+		
+		class GenericBlock extends Block {
+
+			public GenericBlock(Material material) {
+				super(material);
+			}
+		}
+		
+		final GenericBlock block = new GenericBlock(Material.ground);
+		block.setBlockName("DefaultName");
+		block.setCreativeTab(CreativeTabs.tabBlock);
+		block.setHardness(0.5F);
+		
+		GameRegistry.registerBlock(block, "DefaultName");
+	}
+}

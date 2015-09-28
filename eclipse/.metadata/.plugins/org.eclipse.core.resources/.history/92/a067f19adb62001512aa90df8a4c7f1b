@@ -1,0 +1,48 @@
+package com.adebray.mod;
+
+import java.io.Console;
+
+import javax.swing.DebugGraphics;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+
+import net.minecraft.creativetab.CreativeTabs;
+
+@Mod(modid="4242", name="MyMod", version="0.0", dependencies="required-after:FML")
+public class GenericTest {
+	
+	@Instance("4242")
+	public static GenericTest instance;
+
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		System.out.println("This is my pre-init event catcher");
+		
+		class GenericBlock extends Block {
+
+			public GenericBlock(Material material) {
+				super(material);
+			}
+		}
+
+		
+		final GenericBlock block = new GenericBlock(Material.ground);
+		block.setBlockTextureName("brick");
+		block.setBlockName("DefaultName");
+		block.setCreativeTab(CreativeTabs.tabBlock);
+		block.setHardness(0.5F);
+//		block.onBlockEventReceived(p_149696_1_, p_149696_2_, p_149696_3_, p_149696_4_, p_149696_5_, p_149696_6_)
+		block.setLightOpacity(100);
+		System.out.println(block.getLightOpacity());
+		GameRegistry.registerBlock(block, "DefaultName");
+	}
+}
